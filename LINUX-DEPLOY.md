@@ -361,21 +361,111 @@ sudo yum install -y htop iotop  # CentOS/RHEL
 echo "0 2 * * * docker system prune -f" | sudo crontab -
 ```
 
+## 🔧 API重定向问题修复
+
+### 问题描述
+如果访问API时被重定向到主页，说明后端路由配置有问题。
+
+### 快速修复命令
+
+#### 方法一：一键在线修复（推荐）
+```bash
+curl -sSL https://raw.githubusercontent.com/Cz664/my-aweso-/main/remote-fix-api.sh | bash
+```
+
+#### 方法二：手动进入项目目录修复
+```bash
+# 1. 查找项目目录
+find / -name "my-aweso-" -type d 2>/dev/null
+# 或者
+find /opt -name "*futures*" -type d 2>/dev/null
+
+# 2. 进入项目目录（根据实际路径调整）
+cd /opt/my-aweso-
+# 或者
+cd /root/my-aweso-
+
+# 3. 拉取最新修复
+git pull origin main
+
+# 4. 运行API修复
+chmod +x fix-api-redirect.sh
+./fix-api-redirect.sh
+```
+
+#### 方法三：重新克隆并修复
+```bash
+# 如果找不到项目目录，重新克隆
+rm -rf my-aweso-
+git clone https://github.com/Cz664/my-aweso-.git
+cd my-aweso-
+
+# 运行修复脚本
+chmod +x fix-api-redirect.sh
+./fix-api-redirect.sh
+```
+
+### API修复验证
+修复完成后，测试以下API端点：
+
+```bash
+# 测试API状态
+curl http://localhost:3001/api/status
+curl http://193.57.33.111:3001/api/status
+
+# 测试具体API
+curl http://localhost:3001/api/stream/list
+curl http://localhost:3001/api/trading/data
+curl http://localhost:3001/api/auth/test
+
+# 测试登录API
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"email":"admin@futures-trading.com","password":"password"}' \
+  http://localhost:3001/api/auth/login
+```
+
+### 如果API仍有问题
+```bash
+# 查看容器状态
+docker-compose ps
+
+# 查看应用日志
+docker-compose logs app
+
+# 查看Nginx日志
+docker-compose logs nginx
+
+# 重启服务
+docker-compose restart app
+docker-compose restart nginx
+```
+
 ## 🆙 更新部署
 
 ### 自动更新
 ```bash
-cd /opt/futures-platform
-git pull
-./manage.sh  # 选择更新部署
+# 进入项目目录
+cd my-aweso-  # 或实际项目目录路径
+
+# 拉取更新
+git pull origin main
+
+# 重新部署
+chmod +x quick-fix.sh
+./quick-fix.sh
 ```
 
 ### 手动更新
 ```bash
-cd /opt/futures-platform
-git pull
-sudo docker-compose down
-sudo docker-compose up --build -d
+# 进入项目目录
+cd my-aweso-  # 或实际项目目录路径
+
+# 拉取代码
+git pull origin main
+
+# 重新构建部署
+docker-compose down
+docker-compose -f docker-compose-noports.yml up --build -d
 ```
 
 ## ☎️ 技术支持
