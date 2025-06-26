@@ -51,6 +51,7 @@ services:
     networks:
       - futures-network
     volumes:
+      # Windows路径支持
       - ./uploads:/app/uploads
 
   # Nginx反向代理
@@ -71,7 +72,9 @@ services:
 
 volumes:
   mongodb_data:
+    driver: local
   redis_data:
+    driver: local
 
 networks:
   futures-network:

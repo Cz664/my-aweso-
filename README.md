@@ -72,14 +72,41 @@ cd frontend
 npm start
 ```
 
+### Linux服务器一键部署
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Cz664/my-aweso-/main/quick-deploy.sh | sudo bash
+```
+
+### Linux服务器手动部署
+
+1. 克隆项目并运行部署脚本：
+```bash
+git clone https://github.com/Cz664/my-aweso-.git
+cd my-aweso-
+sudo ./deploy-linux.sh
+```
+
+2. 或使用远程部署（从本地推送到服务器）：
+```bash
+./remote-deploy-linux.sh
+```
+
+详细Linux部署说明请查看 [LINUX-DEPLOY.md](LINUX-DEPLOY.md)
+
 ### Windows Server 部署
 
-1. 下载并解压项目文件
-2. 双击运行 `windows-deploy.bat`
-3. 运行 `start.bat` 启动服务
-4. 访问 http://your-server-ip:3001
+1. 运行部署向导：
+```cmd
+start-deploy.bat
+```
 
-详细部署说明请查看 [WINDOWS_DEPLOYMENT.md](WINDOWS_DEPLOYMENT.md)
+2. 或使用PowerShell脚本：
+```powershell
+powershell -ExecutionPolicy Bypass -File deploy-windows.ps1
+```
+
+详细Windows部署说明请查看 [WINDOWS-DEPLOY.md](WINDOWS-DEPLOY.md)
 
 ### Docker 部署
 
