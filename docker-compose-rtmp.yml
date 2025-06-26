@@ -1,0 +1,85 @@
+# 添加RTMP推流服务器支持的Docker配置
+
+# 使用支持RTMP的Nginx镜像
+version: '3.8'
+
+services:
+  # MongoDB数据库
+  mongodb:
+    image: mongo:5.0
+    container_name: futures-trading-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: futures123456
+      MONGO_INITDB_DATABASE: futures-trading
+    expose:
+      - "27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - futures-network
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: futures-trading-redis
+    restart: unless-stopped
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - futures-network
+
+  # 主应用
+  app:
+    build: .
+    container_name: futures-trading-app
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      MONGODB_URI: mongodb://admin:futures123456@mongodb:27017/futures-trading?authSource=admin
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: futures-trading-jwt-secret-key-2024
+      JWT_EXPIRES_IN: 7d
+      CORS_ORIGIN: http://193.57.33.111:3001
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - futures-network
+    volumes:
+      - ./uploads:/app/uploads
+
+  # Nginx with RTMP support
+  nginx-rtmp:
+    image: tiangolo/nginx-rtmp
+    container_name: futures-trading-nginx-rtmp
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "1935:1935"  # RTMP端口
+    volumes:
+      - ./nginx-rtmp.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - /tmp/hls:/tmp/hls  # HLS流存储
+    depends_on:
+      - app
+    networks:
+      - futures-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  futures-network:
+    driver: bridge
