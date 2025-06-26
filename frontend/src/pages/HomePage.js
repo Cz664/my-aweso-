@@ -19,7 +19,7 @@ import {
   People,
   Search,
   TrendingUp,
-  Live,
+  FiberManualRecord,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -93,7 +93,7 @@ const HomePage = () => {
         {/* 统计信息 */}
         <Box sx={{ display: 'flex', gap: 3, mt: 2, mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Live color="error" />
+            <FiberManualRecord color="error" />
             <Typography variant="body2">
               {liveRoomsCount} 个直播间正在直播
             </Typography>
