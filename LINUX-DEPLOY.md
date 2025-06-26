@@ -1,5 +1,26 @@
 # Linux服务器部署指南
 
+## 🚀 最简单修复方法（API重定向问题）
+
+### 如果API被重定向到主页，直接运行：
+
+```bash
+# 一键修复命令 - 会自动克隆项目并修复API
+curl -sSL https://raw.githubusercontent.com/Cz664/my-aweso-/main/remote-fix-api.sh | bash
+```
+
+**或者手动操作：**
+
+```bash
+# 1. 克隆项目（如果还没有）
+git clone https://github.com/Cz664/my-aweso-.git
+cd my-aweso-
+
+# 2. 运行API修复
+chmod +x fix-api-redirect.sh
+./fix-api-redirect.sh
+```
+
 ## 🚀 快速部署（推荐）
 
 ### ⚠️ 重要提醒
