@@ -38,6 +38,31 @@ curl -fsSL https://raw.githubusercontent.com/Cz664/my-aweso-/main/quick-deploy.s
 
 2. **按提示完成部署**
 
+### 方式四：端口冲突修复部署
+
+如果遇到端口冲突（特别是27017、6379端口被占用）：
+
+1. **使用修复脚本**
+   ```bash
+   git clone https://github.com/Cz664/my-aweso-.git
+   cd my-aweso-
+   sudo ./fix-deploy.sh
+   ```
+
+2. **手动修复端口冲突**
+   ```bash
+   # 停止系统服务
+   sudo systemctl stop mongod mongodb redis redis-server nginx httpd
+   sudo systemctl disable mongod mongodb redis redis-server nginx httpd
+   
+   # 清理Docker资源
+   sudo docker stop $(docker ps -q)
+   sudo docker system prune -f
+   
+   # 使用内部端口配置部署
+   sudo docker-compose -f docker-compose-noports.yml up --build -d
+   ```
+
 ### 方式三：手动部署
 
 1. **安装依赖**
@@ -199,7 +224,26 @@ free -h
    
    # 查看进程
    sudo lsof -i :80
+   
+   # 使用端口冲突修复脚本（推荐）
+   sudo ./fix-ports.sh
+   
+   # 或使用修复部署脚本
+   sudo ./fix-deploy.sh
    ```
+
+   **常见端口冲突解决方案：**
+   - MongoDB端口27017被占用：停止系统MongoDB服务
+     ```bash
+     sudo systemctl stop mongod
+     sudo systemctl disable mongod
+     ```
+   - Redis端口6379被占用：停止系统Redis服务
+     ```bash
+     sudo systemctl stop redis-server
+     sudo systemctl disable redis-server
+     ```
+   - 如果仍有端口冲突，将自动使用内部端口配置（docker-compose-noports.yml）
 
 2. **Docker服务未启动**
    ```bash
